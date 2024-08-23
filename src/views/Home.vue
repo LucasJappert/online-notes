@@ -63,7 +63,7 @@ import { defineComponent, ref, computed } from 'vue';
 export default defineComponent({
     name: 'Home',
     setup() {
-        const maxHours = ref<number>(0);
+        const maxHours = ref<number>(6);
         const currentHours = ref<number>(0);
         const addHoursInput = ref<number>(0);
         const logs = ref<{ timestamp: string, hoursAdded: number; }[]>([]);
