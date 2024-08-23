@@ -59,13 +59,14 @@
 <script lang="ts">
 //TODO: Limpiar horas agregadas luego de agregar un registro
 import { defineComponent, ref, computed } from 'vue';
+import confetti from 'canvas-confetti';
 
 export default defineComponent({
     name: 'Home',
     setup() {
         const maxHours = ref<number>(6);
         const currentHours = ref<number>(0);
-        const addHoursInput = ref<number>(0);
+        const addHoursInput = ref<number>(1);
         const logs = ref<{ timestamp: string, hoursAdded: number; }[]>([]);
 
         const progressPercentage = computed(() => {
@@ -74,6 +75,16 @@ export default defineComponent({
                 : 0;
         });
 
+        const executeConfetti = (particleCount: number = 100) => {
+            confetti({
+                particleCount,
+                spread: 80,
+                startVelocity: 100,
+                origin: { y: 0.8 },
+                gravity: 1,
+            });
+        };
+
         const addHours = () => {
             if (maxHours.value > 0 && addHoursInput.value > 0) {
                 const hoursToAdd = addHoursInput.value;
@@ -81,6 +92,13 @@ export default defineComponent({
 
                 if (currentHours.value > maxHours.value) {
                     currentHours.value = maxHours.value;
+                }
+
+                if (currentHours.value >= maxHours.value) {
+                    executeConfetti(500);
+                }
+                else {
+                    executeConfetti(50);
                 }
 
                 // Registrar la hora actual y la cantidad agregada
@@ -93,7 +111,6 @@ export default defineComponent({
         };
 
         const resetProgress = () => {
-            maxHours.value = 0;
             currentHours.value = 0;
             addHoursInput.value = 0;
             logs.value = []; // Limpiar el log

@@ -10,11 +10,13 @@
     },
     "dependencies": {
         "@vuetify/vite-plugin": "^1.0.0-alpha.11",
+        "canvas-confetti": "^1.9.3",
         "vue": "^3.4.37",
         "vue-router": "^4.4.3",
         "vuetify": "^3.7.0"
     },
     "devDependencies": {
+        "@types/canvas-confetti": "^1.6.4",
         "@types/node": "^22.3.0",
         "@types/vue-router": "^2.0.0",
         "@vitejs/plugin-vue": "^2.2.0",
