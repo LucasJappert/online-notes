@@ -1,5 +1,7 @@
 <template>
     <div class="container">
+        <!-- Agrego un link a notes -->
+        <v-btn @click="$router.push('/notes')">Ir a Notas</v-btn>
 
         <!-- Barra de Progreso -->
         <div class="progress-container">
@@ -68,6 +70,7 @@ export default defineComponent({
         const currentHours = ref<number>(0);
         const addHoursInput = ref<number>(1);
         const logs = ref<{ timestamp: string, hoursAdded: number; }[]>([]);
+        const date = ref<Date>(new Date());
 
         const progressPercentage = computed(() => {
             return maxHours.value > 0
@@ -131,7 +134,7 @@ export default defineComponent({
             logs,
             addHours,
             resetProgress,
-            removeLog
+            removeLog, date
         };
     },
     mounted() {
