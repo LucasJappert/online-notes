@@ -22,3 +22,33 @@ body {
 .v-input__details {
     display: none !important;
 }
+
+/* Estiliza la barra de scroll */
+::-webkit-scrollbar {
+    width: 8px;
+    /* Cambia el tamaño aquí para hacerla más fina */
+}
+
+/* Estiliza la parte de la barra (track) */
+::-webkit-scrollbar-track {
+    background: #333;
+    /* Color de fondo de la barra */
+}
+
+/* Estiliza el "pulgar" (la parte móvil) */
+::-webkit-scrollbar-thumb {
+    background-color: green;
+    /* Cambia el color aquí para hacerla verde */
+    border-radius: 10px;
+    /* Bordes redondeados */
+    border: 2px solid #333;
+    /* Espacio entre la barra y el track */
+}
+
+textarea {
+    color: #ffffff !important;
+    height: 50vh !important;
+}
+.v-btn.outlined {
+    border: 1px solid currentColor;
+}

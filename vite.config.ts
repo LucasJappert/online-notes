@@ -17,4 +17,8 @@ export default defineConfig({
             "./src/**/*.vue",
         ],
     },
+    define: {
+        '__VUE_PROD_HYDRATION_MISMATCH_DETAILS__': true, // O puedes poner true si deseas más detalles en el error
+        // Agrega aquí otras feature flags si es necesario
+    },
 });

@@ -1,34 +1,34 @@
 <template>
-    <v-container class="dark-theme">
+    <v-container class="dark-theme" fluid>
         <v-row>
             <v-col cols="12">
-                <h1 class="title">📝 Current Note</h1>
-                <v-textarea v-model="currentNote" label="" outlined class="note-textarea" rows="30"
-                    @input="autoSaveCurrentNote" ref="currentTextarea"></v-textarea>
-                <v-btn @click="saveNote" color="success" class="save-btn">💾 SAVE NOTE</v-btn>
+                <v-textarea v-model="currentNote" placeholder="✏️ Write here..." outlined class="note-textarea"
+                    rows="30" @input="autoSaveCurrentNote" ref="currentTextarea"></v-textarea>
+                <v-btn :disabled="currentNote == ''" @click="saveNote" outlined color="primary" class="my-2">💾
+                    SAVE</v-btn>
             </v-col>
 
-            <v-col cols="12" class="mt-5">
-                <h2 class="subtitle">📋 Menú de Notas Guardadas</h2>
+            <v-col cols="6" class="">
                 <!-- Buscador de notas -->
-                <v-text-field v-model="searchQuery" label="Buscar notas..." outlined class="search-bar"></v-text-field>
-
-                <v-btn @click="toggleNotes" color="secondary" class="toggle-btn">
-                    {{ notesVisible ? '👀 Ocultar Notas' : '📂 Mostrar Notas' }}
-                </v-btn>
+                <v-text-field v-model="searchQuery" placeholder="🔍 Search notes..." cleareable />
+            </v-col>
+            <v-col cols="12" class="">
 
                 <div class="spacer"></div> <!-- Espacio debajo del botón de ocultar notas -->
 
-                <v-row v-if="notesVisible" class="notes-grid" style="max-height: 400px; overflow-y: auto;">
-                    <v-col v-for="(note, index) in sortedFilteredNotes" :key="index" cols="4" class="mb-3">
+                <v-row class="notes-grid" style="max-height: 400px; overflow-y: auto;">
+                    <v-col v-for="(note, index) in sortedFilteredNotes" :key="index" cols="4" class="mb-3"
+                        @click="openNoteModal(note, index)">
                         <v-card class="text-center note-card" outlined elevation="2">
                             <v-card-title class="note-title">{{ formatDate(note.date) }} - {{ note.title
                                 }}</v-card-title>
-                            <v-card-subtitle class="note-subtitle">{{ note.content.substring(0, 20)
+
+                            <v-card-subtitle class="note-subtitle">{{ note.content.substring(0, 200)
                                 }}...</v-card-subtitle>
                             <v-card-actions>
-                                <v-btn @click="openNoteModal(note, index)" text color="primary">📝 Editar</v-btn>
-                                <v-btn @click="confirmDelete(index)" text color="red">🗑️ Eliminar</v-btn>
+                                <v-btn @click.stop="confirmDelete(index)" outlined text color="red">🗑️
+                                    Delete</v-btn>
+                                <v-btn color="primary">📝 Show/Edit</v-btn>
                             </v-card-actions>
                         </v-card>
                     </v-col>
@@ -71,7 +71,6 @@ export default {
         return {
             currentNote: '',
             savedNotes: [],
-            notesVisible: true,
             isNoteModalOpen: false,
             isDeleteConfirmOpen: false,
             selectedDeleteIndex: null,
@@ -81,19 +80,13 @@ export default {
     },
     computed: {
         sortedFilteredNotes() {
-            // Filtrar por búsqueda y ordenar las notas por fecha (descendente)
             return this.savedNotes
                 .filter(
                     note =>
                         note.title.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
                         note.content.toLowerCase().includes(this.searchQuery.toLowerCase())
                 )
-                .sort((a, b) => {
-                    // Convertimos las fechas de los strings a objetos Date para ordenarlas
-                    const dateA = new Date(a.date.split('/').reverse().join('/')); // Formato dd/mm/yyyy
-                    const dateB = new Date(b.date.split('/').reverse().join('/'));
-                    return dateB - dateA; // Orden descendente
-                });
+                .sort((a, b) => b.id - a.id); // Ordenar por ID en orden descendente
         }
     },
     mounted() {
@@ -104,14 +97,21 @@ export default {
         saveNote() {
             if (this.currentNote) {
                 const currentDate = this.getCurrentDate();
+
+                // Determina el próximo ID de la nota
+                const newId = this.savedNotes.length > 0 ? Math.max(...this.savedNotes.map(note => note.id)) + 1 : 1;
+
                 this.savedNotes.push({
-                    title: `Nota ${this.savedNotes.length + 1}`,
+                    id: newId, // ID autoincremental
+                    title: `Nota ${newId}`,
                     content: this.currentNote,
-                    date: currentDate,
+                    date: currentDate, // Mantener la fecha actual
                 });
+
                 this.currentNote = '';
                 this.saveToLocalStorage();
                 localStorage.removeItem('currentNote');
+
                 // Foco en el textarea después de guardar la nota
                 this.$nextTick(() => {
                     this.$refs.currentTextarea.focus();
@@ -136,9 +136,6 @@ export default {
         autoSaveCurrentNote() {
             localStorage.setItem('currentNote', this.currentNote);
         },
-        toggleNotes() {
-            this.notesVisible = !this.notesVisible;
-        },
         openNoteModal(note, index) {
             this.selectedNote = note;
             this.selectedDeleteIndex = index;
@@ -146,7 +143,7 @@ export default {
         },
         updateNote() {
             // Actualizar la nota seleccionada y guardar los cambios
-            this.$set(this.savedNotes, this.selectedDeleteIndex, this.selectedNote);
+            this.savedNotes[this.selectedDeleteIndex] = this.selectedNote;
             this.saveToLocalStorage();
             this.isNoteModalOpen = false;
         },
@@ -173,27 +170,16 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .dark-theme {
     background-color: #1e1e1e;
-    color: #ffffff;
+    color: #cccccc;
 }
 
 .title,
 .subtitle {
-    color: #ffffff;
+    color: #cccccc;
     text-align: center;
-}
-
-.note-textarea {
-    background-color: #2c2c2c !important;
-    color: #ffffff !important;
-    border-color: #555 !important;
-    height: 70vh !important;
-}
-
-.save-btn {
-    margin: 10px 0;
 }
 
 .toggle-btn {
@@ -213,12 +199,11 @@ export default {
     cursor: pointer;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     background-color: #333333;
-    color: #ffffff;
+    color: #aaaaaa;
 }
 
 .note-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.5);
+    box-shadow: 0px 0px 10px #ffffff;
 }
 
 .note-title {
@@ -228,10 +213,6 @@ export default {
 .note-subtitle {
     font-size: 14px;
     color: #aaaaaa;
-}
-
-.search-bar {
-    margin-bottom: 20px;
 }
 
 .v-dialog {

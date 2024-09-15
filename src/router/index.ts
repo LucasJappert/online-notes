@@ -3,7 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 const routes: Array<any> = [
     {
         name: "Home",
-        path: "/",
+        path: "/home",
         component: () => import("../views/Home.vue"),
     },
     {
@@ -12,7 +12,7 @@ const routes: Array<any> = [
     },
     {
         name: "Notepad",
-        path: "/notes",
+        path: "/",
         component: () => import("../views/MyNotepad.vue"),
     }
 ];
