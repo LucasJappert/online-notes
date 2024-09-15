@@ -3,26 +3,31 @@
         <v-row>
             <v-col cols="12">
                 <h1 class="title">📝 Current Note</h1>
-                <v-textarea v-model="currentNote" label="Escribe tu nota..." rows="15" outlined class="note-textarea"
-                    @input="autoSaveCurrentNote"></v-textarea>
+                <v-textarea v-model="currentNote" label="" outlined class="note-textarea" rows="30"
+                    @input="autoSaveCurrentNote" ref="currentTextarea"></v-textarea>
                 <v-btn @click="saveNote" color="success" class="save-btn">💾 SAVE NOTE</v-btn>
             </v-col>
 
             <v-col cols="12" class="mt-5">
                 <h2 class="subtitle">📋 Menú de Notas Guardadas</h2>
+                <!-- Buscador de notas -->
+                <v-text-field v-model="searchQuery" label="Buscar notas..." outlined class="search-bar"></v-text-field>
+
                 <v-btn @click="toggleNotes" color="secondary" class="toggle-btn">
                     {{ notesVisible ? '👀 Ocultar Notas' : '📂 Mostrar Notas' }}
                 </v-btn>
 
-                <v-row v-if="notesVisible" class="notes-grid">
-                    <v-col v-for="(note, index) in savedNotes" :key="index" cols="4" class="mb-3">
+                <div class="spacer"></div> <!-- Espacio debajo del botón de ocultar notas -->
+
+                <v-row v-if="notesVisible" class="notes-grid" style="max-height: 400px; overflow-y: auto;">
+                    <v-col v-for="(note, index) in sortedFilteredNotes" :key="index" cols="4" class="mb-3">
                         <v-card class="text-center note-card" outlined elevation="2">
                             <v-card-title class="note-title">{{ formatDate(note.date) }} - {{ note.title
                                 }}</v-card-title>
                             <v-card-subtitle class="note-subtitle">{{ note.content.substring(0, 20)
                                 }}...</v-card-subtitle>
                             <v-card-actions>
-                                <v-btn @click="openNoteModal(note)" text color="primary">📝 Ver</v-btn>
+                                <v-btn @click="openNoteModal(note, index)" text color="primary">📝 Editar</v-btn>
                                 <v-btn @click="confirmDelete(index)" text color="red">🗑️ Eliminar</v-btn>
                             </v-card-actions>
                         </v-card>
@@ -30,13 +35,17 @@
                 </v-row>
             </v-col>
 
-            <!-- Modal para ver la nota -->
-            <v-dialog v-model="isNoteModalOpen" max-width="600px" transition="dialog-transition">
-                <v-card>
-                    <v-card-title>{{ selectedNote.title }}</v-card-title>
-                    <v-card-text>{{ selectedNote.content }}</v-card-text>
-                    <v-card-actions>
-                        <v-btn color="primary" @click="isNoteModalOpen = false">Cerrar</v-btn>
+            <!-- Modal para ver y editar la nota -->
+            <v-dialog v-model="isNoteModalOpen" max-width="80%" transition="dialog-transition">
+                <v-card class="dark-theme">
+                    <v-card-title>📝 Editar Nota</v-card-title>
+                    <v-card-text>
+                        <v-textarea v-model="selectedNote.content" rows="35" outlined
+                            class="note-textarea"></v-textarea>
+                    </v-card-text>
+                    <v-card-actions class="justify-space-between">
+                        <v-btn color="grey" @click="isNoteModalOpen = false">Cancelar</v-btn>
+                        <v-btn color="success" @click="updateNote">💾 Guardar Cambios</v-btn>
                     </v-card-actions>
                 </v-card>
             </v-dialog>
@@ -67,7 +76,25 @@ export default {
             isDeleteConfirmOpen: false,
             selectedDeleteIndex: null,
             selectedNote: {},
+            searchQuery: '',
         };
+    },
+    computed: {
+        sortedFilteredNotes() {
+            // Filtrar por búsqueda y ordenar las notas por fecha (descendente)
+            return this.savedNotes
+                .filter(
+                    note =>
+                        note.title.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+                        note.content.toLowerCase().includes(this.searchQuery.toLowerCase())
+                )
+                .sort((a, b) => {
+                    // Convertimos las fechas de los strings a objetos Date para ordenarlas
+                    const dateA = new Date(a.date.split('/').reverse().join('/')); // Formato dd/mm/yyyy
+                    const dateB = new Date(b.date.split('/').reverse().join('/'));
+                    return dateB - dateA; // Orden descendente
+                });
+        }
     },
     mounted() {
         this.loadNotes();
@@ -85,6 +112,10 @@ export default {
                 this.currentNote = '';
                 this.saveToLocalStorage();
                 localStorage.removeItem('currentNote');
+                // Foco en el textarea después de guardar la nota
+                this.$nextTick(() => {
+                    this.$refs.currentTextarea.focus();
+                });
             }
         },
         loadNotes() {
@@ -108,9 +139,16 @@ export default {
         toggleNotes() {
             this.notesVisible = !this.notesVisible;
         },
-        openNoteModal(note) {
+        openNoteModal(note, index) {
             this.selectedNote = note;
+            this.selectedDeleteIndex = index;
             this.isNoteModalOpen = true;
+        },
+        updateNote() {
+            // Actualizar la nota seleccionada y guardar los cambios
+            this.$set(this.savedNotes, this.selectedDeleteIndex, this.selectedNote);
+            this.saveToLocalStorage();
+            this.isNoteModalOpen = false;
         },
         confirmDelete(index) {
             this.selectedDeleteIndex = index;
@@ -151,7 +189,7 @@ export default {
     background-color: #2c2c2c !important;
     color: #ffffff !important;
     border-color: #555 !important;
-    min-height: 300px;
+    height: 70vh !important;
 }
 
 .save-btn {
@@ -160,6 +198,11 @@ export default {
 
 .toggle-btn {
     margin-top: 15px;
+}
+
+.spacer {
+    margin-bottom: 20px;
+    /* Espacio debajo del botón de ocultar notas */
 }
 
 .notes-grid {
@@ -187,6 +230,10 @@ export default {
     color: #aaaaaa;
 }
 
+.search-bar {
+    margin-bottom: 20px;
+}
+
 .v-dialog {
     transition: opacity 0.3s ease;
 }
@@ -200,5 +247,10 @@ export default {
 .dialog-transition-enter,
 .dialog-transition-leave-to {
     opacity: 0;
+}
+
+.v-card-actions {
+    display: flex;
+    justify-content: space-between;
 }
 </style>
