@@ -1,8 +1,5 @@
 <template>
     <div class="container">
-        <!-- Agrego un link a notes -->
-        <v-btn @click="$router.push('/notes')">Ir a Notas</v-btn>
-
         <!-- Barra de Progreso -->
         <div class="progress-container">
             <h2>Progreso de Horas</h2>
