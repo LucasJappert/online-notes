@@ -8,7 +8,7 @@ export default {
 </script>
 
 <template>
-    <div class="content">
+    <div class="content h-100">
         <router-view></router-view>
     </div>
 </template>

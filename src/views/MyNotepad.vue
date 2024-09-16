@@ -1,21 +1,21 @@
 <template>
-    <v-container class="dark-theme" fluid>
+    <v-container class="dark-theme h-100" fluid>
         <v-row>
-            <v-col cols="12">
+            <v-col cols="12" class="p-relative">
                 <v-textarea v-model="currentNote" placeholder="✏️ Write here..." outlined class="note-textarea"
                     rows="30" @input="autoSaveCurrentNote" ref="currentTextarea"></v-textarea>
-                <v-btn :disabled="currentNote == ''" @click="saveNote" outlined color="primary" class="my-2">💾
-                    SAVE</v-btn>
+                <v-btn :disabled="currentNote == ''" @click="saveNote" outlined color="primary"
+                    class="my-2 save-button">💾
+                    SAVE NOTE</v-btn>
             </v-col>
 
-            <v-col cols="6" class="">
-                <!-- Buscador de notas -->
-                <v-text-field v-model="searchQuery" placeholder="🔍 Search notes..." cleareable />
+            <v-col cols="12" class="justify-space-between d-flex mt-2">
+                <v-btn @click="exportNotes" outlined color="secondary" class="my-2 export-button">📤 Export
+                    Notes</v-btn>
+                <v-text-field class="search-box" v-model="searchQuery" placeholder="🔍 Search notes..." />
             </v-col>
+
             <v-col cols="12" class="">
-
-                <div class="spacer"></div> <!-- Espacio debajo del botón de ocultar notas -->
-
                 <v-row class="notes-grid" style="max-height: 400px; overflow-y: auto;">
                     <v-col v-for="(note, index) in sortedFilteredNotes" :key="index" cols="4" class="mb-3"
                         @click="openNoteModal(note, index)">
@@ -26,7 +26,7 @@
                             <v-card-subtitle class="note-subtitle">{{ note.content.substring(0, 200)
                                 }}...</v-card-subtitle>
                             <v-card-actions>
-                                <v-btn @click.stop="confirmDelete(index)" outlined text color="red">🗑️
+                                <v-btn @click.stop="confirmDelete(note)" outlined text color="red">🗑️
                                     Delete</v-btn>
                                 <v-btn color="primary">📝 Show/Edit</v-btn>
                             </v-card-actions>
@@ -36,12 +36,12 @@
             </v-col>
 
             <!-- Modal para ver y editar la nota -->
-            <v-dialog v-model="isNoteModalOpen" max-width="80%" transition="dialog-transition">
+            <v-dialog v-if="editingNote != null" v-model="isNoteModalOpen" max-width="80%"
+                transition="dialog-transition">
                 <v-card class="dark-theme">
                     <v-card-title>📝 Editar Nota</v-card-title>
                     <v-card-text>
-                        <v-textarea v-model="selectedNote.content" rows="35" outlined
-                            class="note-textarea"></v-textarea>
+                        <v-textarea v-model="editingNote.content" rows="35" outlined class="note-textarea"></v-textarea>
                     </v-card-text>
                     <v-card-actions class="justify-space-between">
                         <v-btn color="grey" @click="isNoteModalOpen = false">Cancelar</v-btn>
@@ -51,13 +51,16 @@
             </v-dialog>
 
             <!-- Confirmación para eliminar nota -->
-            <v-dialog v-model="isDeleteConfirmOpen" max-width="400px">
+            <v-dialog v-if="noteToDelete" v-model="isDeleteConfirmOpen">
                 <v-card>
-                    <v-card-title class="headline">¿Estás seguro?</v-card-title>
-                    <v-card-text>¿Quieres eliminar esta nota?</v-card-text>
+                    <v-card-title class="headline">⚠️ ¿Estás seguro de eliminar esta nota? ⚠️</v-card-title>
+                    <v-card-text>
+                        <v-textarea v-model="noteToDelete.content" rows="35" outlined class="note-textarea"
+                            disabled></v-textarea>
+                    </v-card-text>
                     <v-card-actions>
                         <v-btn @click="isDeleteConfirmOpen = false">Cancelar</v-btn>
-                        <v-btn color="red" @click="deleteNote(selectedDeleteIndex)">Eliminar</v-btn>
+                        <v-btn color="red" @click="deleteNote()">Eliminar</v-btn>
                     </v-card-actions>
                 </v-card>
             </v-dialog>
@@ -73,8 +76,8 @@ export default {
             savedNotes: [],
             isNoteModalOpen: false,
             isDeleteConfirmOpen: false,
-            selectedDeleteIndex: null,
-            selectedNote: {},
+            noteToDelete: null,
+            editingNote: null,
             searchQuery: '',
         };
     },
@@ -94,6 +97,16 @@ export default {
         this.loadCurrentNote();
     },
     methods: {
+        exportNotes() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(this.savedNotes));
+            const downloadAnchorNode = document.createElement('a');
+            downloadAnchorNode.setAttribute("href", dataStr);
+            const stringDate = new Date().toISOString().slice(0, 10);
+            downloadAnchorNode.setAttribute("download", `notas-${stringDate}.json`);
+            document.body.appendChild(downloadAnchorNode); // required for firefox
+            downloadAnchorNode.click();
+            downloadAnchorNode.remove();
+        },
         saveNote() {
             if (this.currentNote) {
                 const currentDate = this.getCurrentDate();
@@ -136,23 +149,26 @@ export default {
         autoSaveCurrentNote() {
             localStorage.setItem('currentNote', this.currentNote);
         },
-        openNoteModal(note, index) {
-            this.selectedNote = note;
-            this.selectedDeleteIndex = index;
+        openNoteModal(note) {
+            this.editingNote = JSON.parse(JSON.stringify(note));
             this.isNoteModalOpen = true;
         },
         updateNote() {
-            // Actualizar la nota seleccionada y guardar los cambios
-            this.savedNotes[this.selectedDeleteIndex] = this.selectedNote;
+            const noteToUpdate = this.savedNotes.find(note => note.id === this.editingNote.id);
+            noteToUpdate.content = this.editingNote.content;
             this.saveToLocalStorage();
             this.isNoteModalOpen = false;
+            this.editingNote = null;
         },
-        confirmDelete(index) {
-            this.selectedDeleteIndex = index;
+        confirmDelete(note) {
+            this.noteToDelete = note;
             this.isDeleteConfirmOpen = true;
         },
-        deleteNote(index) {
-            this.savedNotes.splice(index, 1);
+        deleteNote() {
+            if (!this.noteToDelete) return;
+
+            this.savedNotes = this.savedNotes.filter(note => note.id !== this.noteToDelete.id);
+            this.noteToDelete = null;
             this.saveToLocalStorage();
             this.isDeleteConfirmOpen = false;
         },
@@ -233,5 +249,15 @@ export default {
 .v-card-actions {
     display: flex;
     justify-content: space-between;
+}
+
+.search-box {
+    max-width: 500px;
+}
+
+.save-button {
+    position: absolute;
+    right: 30px;
+    bottom: 30px;
 }
 </style>

@@ -52,3 +52,13 @@ textarea {
 .v-btn.outlined {
     border: 1px solid currentColor;
 }
+.h-100 {
+    height: 100vh !important;
+}
+.p-relative {
+    position: relative !important;
+}
+
+#app {
+    height: 100vh !important;
+}
