@@ -2,11 +2,6 @@ import { createRouter, createWebHistory } from 'vue-router';
 
 const routes: Array<any> = [
     {
-        name: "Home",
-        path: "/home",
-        component: () => import("../views/Home.vue"),
-    },
-    {
         path: "/index.html",
         redirect: "/",
     },

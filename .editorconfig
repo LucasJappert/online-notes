@@ -18,8 +18,8 @@ charset = utf-8
 indent_style = space
 indent_size = 4
 
-# 2 space indentation
-[*.{vue,scss,ts,js,css}]
+# 4 space indentation
+[*.{vue,scss,ts,js,css,json}]
 indent_style = space
 indent_size = 4
 
