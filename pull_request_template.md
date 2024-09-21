@@ -1,33 +1,33 @@
-## 🧑‍💼 Responsable: (Nombre)
+## 🧑‍💼 Responsible: (Name)
 
-El responsable será el encargado de realizar las pruebas locales necesarias y activar los checks del Checklist final
+The responsible person will be in charge of performing the necessary local tests and activating the checks from the final Checklist.
 
-## ✨ Descripción
+## ✨ Description
 
-(Describa brevemente el propósito de este PR. Incluya el contexto y la razón de los cambios. Si es una corrección de error, mencione el problema resuelto.)
+(Briefly describe the purpose of this PR. Include context and reasoning for the changes. If it is a bug fix, mention the issue being resolved.)
 
-## 🔍 Tipo de Cambio
+## 🔍 Type of Change
 
-(Marque con una `x` todas las opciones relevantes.)
+(Check all relevant options with an `x`.)
 
--   [ ] 🐛 Corrección de errores
--   [ ] 🚀 Nueva funcionalidad
--   [ ] 📈 Mejora
--   [ ] 🔄 Refactorización
--   [ ] 📚 Documentación
--   [ ] Otro (especifique): [Otro tipo de cambio]
+-   [ ] 🐛 Bug fix
+-   [ ] 🚀 New feature
+-   [ ] 📈 Enhancement
+-   [ ] 🔄 Refactoring
+-   [ ] 📚 Documentation
+-   [ ] Other (specify): [Other type of change]
 
-## 📸 Capturas de Pantalla
+## 📸 Screenshots
 
-(Si los cambios incluyen actualizaciones visuales, agregue capturas de pantalla para ilustrar los cambios.)
+(If the changes include visual updates, add screenshots to illustrate the changes.)
 
 ## ✅ Checklist
 
--   [ ] He realizado una auto-revisión del código
--   [ ] Los cambios cumplen con los estándares de estilo de código
--   [ ] Los cambios han sido probados y funcionan como se esperaba
--   [ ] No hay errores ni advertencias en el código
+-   [ ] I have performed a self-review of the code
+-   [ ] The changes follow the code style standards
+-   [ ] The changes have been tested and work as expected
+-   [ ] There are no errors or warnings in the code
 
-## 📝 Comentarios adicionales
+## 📝 Additional Comments
 
-(Cualquier comentario adicional que considere relevante.)
+(Any additional comments you consider relevant.)
