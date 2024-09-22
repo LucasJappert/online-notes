@@ -59,6 +59,14 @@ textarea {
     position: relative !important;
 }
 
+.dark-theme {
+    background-color: #1e1e1e;
+    color: #cccccc;
+}
+
 #app {
-    height: 100vh !important;
+    min-height: 100vh !important;
+    .content {
+        min-height: 100vh !important;
+    }
 }
