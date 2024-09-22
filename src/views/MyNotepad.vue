@@ -20,7 +20,7 @@
             </v-col>
 
             <v-col cols="12" class="">
-                <v-row class="notes-grid" style="max-height: 400px; overflow-y: auto">
+                <v-row class="notes-grid">
                     <v-col v-for="(note, index) in sortedFilteredNotes" :key="index" cols="4" class="mb-3" @click="openNoteModal(note, index)">
                         <v-card class="text-center note-card" outlined elevation="2">
                             <v-card-title class="note-title">{{ formatDate(note.date) }} - {{ note.title }}</v-card-title>
