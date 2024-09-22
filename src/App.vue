@@ -6,7 +6,7 @@ export default {
 </script>
 
 <template>
-    <div class="content h-100">
+    <div class="content dark-theme">
         <router-view></router-view>
     </div>
 </template>

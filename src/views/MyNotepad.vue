@@ -1,5 +1,5 @@
 <template>
-    <v-container class="dark-theme h-100" fluid>
+    <v-container fluid>
         <v-row>
             <v-col cols="12" class="p-relative">
                 <v-textarea
@@ -11,7 +11,7 @@
                     @input="autoSaveCurrentNote"
                     ref="currentTextarea"
                 ></v-textarea>
-                <v-btn :disabled="currentNote == ''" @click="saveNote" outlined color="primary" class="my-2 save-button">💾 SAVE NOTE</v-btn>
+                <v-btn :disabled="currentNote == ''" @click="saveNote" color="primary" class="my-2 save-button">💾 SAVE NOTE</v-btn>
             </v-col>
 
             <v-col cols="12" class="justify-space-between d-flex mt-2">
@@ -20,31 +20,31 @@
             </v-col>
 
             <v-col cols="12" class="">
-                <v-row class="notes-grid" style="max-height: 400px; overflow-y: auto">
-                    <v-col v-for="(note, index) in sortedFilteredNotes" :key="index" cols="4" class="mb-3" @click="openNoteModal(note, index)">
+                <v-row class="notes-grid">
+                    <div v-for="(note, index) in sortedFilteredNotes" :key="index" class="ma-3" @click="openNoteModal(note, index)">
                         <v-card class="text-center note-card" outlined elevation="2">
                             <v-card-title class="note-title">{{ formatDate(note.date) }} - {{ note.title }}</v-card-title>
 
                             <v-card-subtitle class="note-subtitle">{{ note.content.substring(0, 200) }}...</v-card-subtitle>
                             <v-card-actions>
-                                <v-btn @click.stop="confirmDelete(note)" outlined text color="red">🗑️ Delete</v-btn>
+                                <v-btn @click.stop="confirmDelete(note)" color="red">🗑️ Delete</v-btn>
                                 <v-btn color="primary">📝 Show/Edit</v-btn>
                             </v-card-actions>
                         </v-card>
-                    </v-col>
+                    </div>
                 </v-row>
             </v-col>
 
             <!-- Modal para ver y editar la nota -->
             <v-dialog v-if="editingNote != null" v-model="isNoteModalOpen" max-width="80%" transition="dialog-transition">
                 <v-card class="dark-theme">
-                    <v-card-title>📝 Editar Nota</v-card-title>
+                    <v-card-title>📝 Editing note</v-card-title>
                     <v-card-text>
                         <v-textarea v-model="editingNote.content" rows="35" outlined class="note-textarea"></v-textarea>
                     </v-card-text>
                     <v-card-actions class="justify-space-between">
-                        <v-btn color="grey" @click="isNoteModalOpen = false">Cancelar</v-btn>
-                        <v-btn color="success" @click="updateNote">💾 Guardar Cambios</v-btn>
+                        <v-btn color="grey" @click="isNoteModalOpen = false">Cancel</v-btn>
+                        <v-btn :disabled="updateButtonDisabled" color="success" @click="updateNote">💾 Save changes</v-btn>
                     </v-card-actions>
                 </v-card>
             </v-dialog>
@@ -52,13 +52,13 @@
             <!-- Confirmación para eliminar nota -->
             <v-dialog v-if="noteToDelete" v-model="isDeleteConfirmOpen">
                 <v-card>
-                    <v-card-title class="headline">⚠️ ¿Estás seguro de eliminar esta nota? ⚠️</v-card-title>
+                    <v-card-title class="headline">⚠️ Are you sure you want to delete this note?</v-card-title>
                     <v-card-text>
                         <v-textarea v-model="noteToDelete.content" rows="35" outlined class="note-textarea" disabled></v-textarea>
                     </v-card-text>
-                    <v-card-actions>
-                        <v-btn @click="isDeleteConfirmOpen = false">Cancelar</v-btn>
-                        <v-btn color="red" @click="deleteNote()">Eliminar</v-btn>
+                    <v-card-actions class="justify-space-between">
+                        <v-btn @click="isDeleteConfirmOpen = false">Cancel</v-btn>
+                        <v-btn color="red" @click="deleteNote()">Delete now</v-btn>
                     </v-card-actions>
                 </v-card>
             </v-dialog>
@@ -88,6 +88,10 @@ export default {
                         note.content.toLowerCase().includes(this.searchQuery.toLowerCase()),
                 )
                 .sort((a, b) => b.id - a.id);
+        },
+        updateButtonDisabled() {
+            const noteToUpdate = this.savedNotes.find((note) => note.id === this.editingNote.id);
+            return this.editingNote.content == noteToUpdate.content;
         },
     },
     mounted() {
@@ -185,11 +189,6 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.dark-theme {
-    background-color: #1e1e1e;
-    color: #cccccc;
-}
-
 .title,
 .subtitle {
     color: #cccccc;
@@ -211,13 +210,15 @@ export default {
 
 .note-card {
     cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    background-color: #333333;
+    background-color: #282828;
     color: #aaaaaa;
-}
+    transition: all 0.2s ease;
+    width: 300px;
 
-.note-card:hover {
-    box-shadow: 0px 0px 10px #ffffff;
+    &:hover {
+        background-color: #ffffff10;
+        transform: scale(1.05);
+    }
 }
 
 .note-title {
