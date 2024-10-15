@@ -3,26 +3,24 @@
         <!-- Barra de progreso -->
         <div class="timeline-bar">
             <div
-                v-for="segment in segments"
+                v-for="(segment, index) in segments"
                 :key="segment.title"
                 class="segment"
                 :style="segmentStyle(segment)"
-                :class="['segment', isCompletedSegment(segment) ? 'completed-segment' : '']"
+                :class="['segment', isCompletedSegment(segment) ? 'completed-segment' : 'current-segment']"
             >
                 <div v-if="isCurrentSegment(segment)" class="progress" :style="progressStyle(segment)"></div>
                 <span class="segment-title">{{ segment.title }}</span>
-            </div>
-        </div>
 
-        <!-- Botón PLAY -->
-        <div class="play-button-container">
-            <v-btn class="play-button" @click="startTimeline">Play</v-btn>
+                <span v-if="index == 0" class="range_from range">{{ segment.startTime }}</span>
+                <span class="range_to range">{{ segment.endTime }}</span>
+            </div>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onBeforeUnmount, CSSProperties } from "vue";
+import { ref, computed, onBeforeUnmount, CSSProperties, onMounted } from "vue";
 
 interface Segment {
     title: string;
@@ -33,15 +31,17 @@ interface Segment {
 // Estado y variables
 const currentProgress = ref<number>(0);
 let intervalId: number | null = null;
+
+// const segments = ref<Segment[]>([{ title: "Work", startTime: "01:00", endTime: "08:00" }]);
 const segments = ref<Segment[]>([
-    { title: "Hard work", startTime: "06:00", endTime: "08:00" },
+    { title: "Work", startTime: "06:00", endTime: "08:00" },
     { title: "Daily", startTime: "08:00", endTime: "08:15" },
-    { title: "Hard work", startTime: "08:15", endTime: "12:00" },
-    { title: "Lunch", startTime: "12:00", endTime: "13:00" },
-    { title: "Hard work", startTime: "13:00", endTime: "14:00" },
+    { title: "Work", startTime: "08:15", endTime: "12:00" },
+    { title: "Launch", startTime: "12:00", endTime: "12:45" },
+    { title: "Work", startTime: "12:45", endTime: "14:00" },
     { title: "Nap", startTime: "14:00", endTime: "14:15" },
-    { title: "Hard work", startTime: "14:15", endTime: "16:00" },
-    { title: "Random", startTime: "16:00", endTime: "18:00" },
+    { title: "Work", startTime: "14:15", endTime: "16:00" },
+    { title: "Random time", startTime: "16:00", endTime: "20:00" },
 ]);
 
 const startTime = ref<string>("14:00");
@@ -120,6 +120,10 @@ const totalMinutes = computed(() => {
     return calculateMinutes(endTime.value) - calculateMinutes(startTime.value);
 });
 
+onMounted(() => {
+    startTimeline();
+});
+
 // Limpiar el intervalo al desmontar
 onBeforeUnmount(() => {
     if (intervalId !== null) {
@@ -128,7 +132,7 @@ onBeforeUnmount(() => {
 });
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .timeline-bar {
     display: flex;
     justify-content: space-between;
@@ -142,61 +146,76 @@ onBeforeUnmount(() => {
 .segment {
     background-color: #000000;
     font-weight: bold;
-    color: #ffffff; /* Texto blanco para buen contraste */
+    color: #ff00ffcc; /* Texto blanco para buen contraste */
     position: relative;
-    overflow: hidden;
     height: 40px;
     display: inline-block;
     background-color: #1c1c1c; /* Fondo aún más oscuro para los segmentos */
     border-radius: 10px; /* Bordes redondeados */
-    /* border: 2px solid rgba(0, 255, 255, 0.8); */
-    margin: auto 5px;
-    box-shadow: 0px 0px 10px rgba(0, 255, 255, 0.5); /* Efecto de resplandor en los segmentos */
-}
+    /* border: 2px solid #00ffffcc; */
+    margin: auto 10px;
+    box-shadow: 0px 0px 10px #ff00ffcc; /* Efecto de resplandor en los segmentos */
+    min-width: 50px;
+    width: 100%;
+    text-shadow: 0px 0px 10px #ff00ffcc; /* Efecto de sombra neón */
 
-.segment-title {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    color: #00ffff; /* Celeste neón para los títulos */
-    font-size: 16px;
-    font-weight: bold;
-    text-shadow: 0px 0px 10px rgba(0, 255, 255, 0.8), 0px 0px 10px rgba(255, 0, 255, 0.8); /* Efecto de sombra neón */
-    z-index: 1;
+    .segment-title {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 16px;
+        font-weight: bold;
+        z-index: 1;
+    }
 }
 .completed-segment {
-    background: linear-gradient(45deg, rgba(255, 255, 255, 0.1), rgba(255, 0, 255, 0.4), rgba(0, 255, 255, 0.4), rgba(255, 0, 255, 0.4)); /* Degradado neón */
-    background-size: 200% 100%;
+    background: linear-gradient(45deg, #ff00ff66, #00000090, #00000090, #00000090, #ff00ff66); /* Degradado neón */
+    background-size: 100% 100%;
     border-radius: 10px;
-    box-shadow: 0px 0px 15px rgba(0, 255, 255, 0.5); /* Resplandor neón */
+}
+.current-segment {
+    box-shadow: 0px 0px 10px #00ffffcc; /* Efecto de resplandor en los segmentos */
+    color: #00ffffcc; /* Texto blanco para buen contraste */
+    text-shadow: 0px 0px 10px #000000; /* Efecto de sombra neón */
+}
+.range {
+    position: absolute;
+    top: 100%;
+    transform: translateY(-50%) rotate(-90deg);
+    color: #00ffff;
+    width: 0px;
+    height: 0px;
+    display: block;
+}
+.range_from {
+    left: 0;
+    margin-left: -20px;
+}
+.range_to {
+    right: 0;
+    margin-right: 2px;
 }
 
 .progress {
     height: 100%;
     position: absolute;
     transition: width 1s ease;
-    background: linear-gradient(
-        45deg,
-        rgba(255, 255, 255, 0.1),
-        rgba(255, 0, 255, 0.4),
-        rgba(0, 255, 255, 0.4),
-        rgba(255, 0, 255, 0.4)
-    ); /* Degradado animado neón */
+    background: linear-gradient(45deg, #00ffff66, #00ffff66 25%, #ff00ff66 50%, #00ffff66 90%);
     background-size: 200% 100%; /* Tamaño del fondo */
     animation: slideBackground 3s linear infinite; /* Animación de diagonales */
     overflow: hidden;
     z-index: 0;
     border-radius: 10px;
-    box-shadow: 0px 0px 15px rgba(0, 255, 255, 0.5); /* Efecto de resplandor alrededor del progreso completado */
+    box-shadow: 0px 0px 15px #00ffff80; /* Efecto de resplandor alrededor del progreso completado */
 }
 
 @keyframes slideBackground {
     0% {
-        background-position: 200% 0;
+        background-position: 0% 50%;
     }
     100% {
-        background-position: -200% 0;
+        background-position: 200% 50%;
     }
 }
 
@@ -210,7 +229,7 @@ onBeforeUnmount(() => {
     color: #ffffff; /* Texto blanco */
     font-weight: bold;
     border-radius: 10px;
-    box-shadow: 0px 0px 10px rgba(255, 0, 255, 0.8), 0px 0px 10px rgba(0, 255, 255, 0.8); /* Efecto neón en el botón */
+    box-shadow: 0px 0px 10px #ff00ffcc, 0px 0px 10px #00ffffcc; /* Efecto neón en el botón */
     padding: 10px 20px;
     transition: transform 0.2s ease;
 }

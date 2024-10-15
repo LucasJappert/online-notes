@@ -1,6 +1,5 @@
 <template>
     <v-container fluid>
-        <ProgressWork />
         <v-row>
             <v-col cols="12" class="p-relative">
                 <v-textarea
@@ -68,11 +67,7 @@
 </template>
 
 <script>
-import ProgressWork from "../components/ProgressWork.vue";
 export default {
-    components: {
-        ProgressWork,
-    },
     data() {
         return {
             currentNote: "",

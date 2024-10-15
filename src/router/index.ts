@@ -9,6 +9,11 @@ const routes: Array<any> = [
         name: "Notepad",
         path: "/",
         component: () => import("../views/MyNotepad.vue"),
+    },
+    {
+        name: "ProgressWork",
+        path: "/progress-work",
+        component: () => import("../views/ProgressWork.vue"),
     }
 ];
 
