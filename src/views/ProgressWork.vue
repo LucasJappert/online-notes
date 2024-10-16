@@ -7,7 +7,10 @@
                 :key="segment.title"
                 class="segment"
                 :style="segmentStyle(segment)"
-                :class="['segment', isCompletedSegment(segment) ? 'completed-segment' : 'current-segment']"
+                :class="{
+                    'completed-segment': isCompletedSegment(segment),
+                    'current-segment': isCurrentSegment(segment),
+                }"
             >
                 <div v-if="isCurrentSegment(segment)" class="progress" :style="progressStyle(segment)"></div>
                 <span class="segment-title">{{ segment.title }}</span>
@@ -170,7 +173,7 @@ onBeforeUnmount(() => {
     }
 }
 .completed-segment {
-    background: linear-gradient(45deg, #ff00ff66, #00000090, #00000090, #00000090, #ff00ff66); /* Degradado neón */
+    background: linear-gradient(45deg, #00ffff50, #00ffff20, #00ffff50, #00ffff20); /* Degradado neón */
     background-size: 100% 100%;
     border-radius: 10px;
 }
