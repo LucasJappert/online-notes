@@ -35,16 +35,17 @@ interface Segment {
 const currentProgress = ref<number>(0);
 let intervalId: number | null = null;
 
-// const segments = ref<Segment[]>([{ title: "Work", startTime: "01:00", endTime: "08:00" }]);
+// const segments = ref<Segment[]>([{ title: "Work", startTime: "20:00", endTime: "21:00" }]);
 const segments = ref<Segment[]>([
     { title: "Work", startTime: "06:00", endTime: "08:00" },
     { title: "Daily", startTime: "08:00", endTime: "08:15" },
     { title: "Work", startTime: "08:15", endTime: "12:00" },
     { title: "Launch", startTime: "12:00", endTime: "12:45" },
-    { title: "Work", startTime: "12:45", endTime: "14:00" },
-    { title: "Nap", startTime: "14:00", endTime: "14:15" },
-    { title: "Work", startTime: "14:15", endTime: "16:00" },
-    { title: "Random time", startTime: "16:00", endTime: "20:00" },
+    { title: "Nap", startTime: "12:45", endTime: "13:00" },
+    { title: "Work", startTime: "13:00", endTime: "14:30" },
+    // { title: "Nap", startTime: "14:00", endTime: "14:15" },
+    // { title: "Work", startTime: "14:15", endTime: "16:00" },
+    // { title: "Random time", startTime: "16:00", endTime: "20:00" },
 ]);
 
 const startTime = ref<string>("14:00");
@@ -59,8 +60,6 @@ const updateProgress = () => {
     const now = new Date();
     const currentTime = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
     currentProgress.value = calculateMinutes(currentTime);
-
-    console.log("Current time in minutes:", currentProgress.value);
 };
 
 // Función para comparar si un segmento ya ha terminado
@@ -83,11 +82,9 @@ const isCurrentSegment = (segment: Segment): boolean => {
 
     const isCurrent = currentTime >= segmentStart && currentTime <= segmentEnd;
 
-    if (isCurrent) {
-        console.log(`Segment ${segment.title} is active`);
-    }
+    if (isCurrent) return true;
 
-    return isCurrent;
+    return false;
 };
 
 const currentSegmentProgress = (segment: Segment): number => {
@@ -97,8 +94,6 @@ const currentSegmentProgress = (segment: Segment): number => {
     const segmentDuration = segmentEnd - segmentStart;
 
     const progress = ((currentTime - segmentStart) / segmentDuration) * 100;
-
-    console.log(`Progress for segment ${segment.title}:`, progress);
 
     return progress;
 };
@@ -149,14 +144,13 @@ onBeforeUnmount(() => {
 .segment {
     background-color: #000000;
     font-weight: bold;
-    color: #ff00ffcc; /* Texto blanco para buen contraste */
     position: relative;
     height: 40px;
     display: inline-block;
     background-color: #1c1c1c; /* Fondo aún más oscuro para los segmentos */
     border-radius: 10px; /* Bordes redondeados */
     /* border: 2px solid #00ffffcc; */
-    margin: auto 10px;
+    margin: auto 15px;
     box-shadow: 0px 0px 10px #ff00ffcc; /* Efecto de resplandor en los segmentos */
     min-width: 50px;
     width: 100%;
@@ -173,38 +167,24 @@ onBeforeUnmount(() => {
     }
 }
 .completed-segment {
-    background: linear-gradient(45deg, #00ffff50, #00ffff20, #00ffff50, #00ffff20); /* Degradado neón */
-    background-size: 100% 100%;
+    color: #ff00ffcc; /* Texto blanco para buen contraste */
+    text-shadow: 0px 0px 10px #000000, 0px 0px 10px #000000;
+    // background: linear-gradient(45deg, #00ffff50, #00ffff20, #00ffff50, #00ffff20);
+    background: linear-gradient(45deg, #4b114bcc, #4b114bcc 25%, #4b114bcc 50%, #4b114bcc 90%);
+    background-size: 200% 100%; /* Tamaño del fondo */
     border-radius: 10px;
 }
 .current-segment {
-    box-shadow: 0px 0px 10px #00ffffcc; /* Efecto de resplandor en los segmentos */
-    color: #00ffffcc; /* Texto blanco para buen contraste */
-    text-shadow: 0px 0px 10px #000000; /* Efecto de sombra neón */
-}
-.range {
-    position: absolute;
-    top: 100%;
-    transform: translateY(-50%) rotate(-90deg);
-    color: #00ffff;
-    width: 0px;
-    height: 0px;
-    display: block;
-}
-.range_from {
-    left: 0;
-    margin-left: -20px;
-}
-.range_to {
-    right: 0;
-    margin-right: 2px;
+    box-shadow: 0px 0px 10px #00ffffcc;
+    color: #00ffffcc;
+    text-shadow: 0px 0px 15px #000, 0px 0px 15px #000, 0px 0px 15px #000, 0px 0px 15px #000;
 }
 
 .progress {
     height: 100%;
     position: absolute;
     transition: width 1s ease;
-    background: linear-gradient(45deg, #00ffff66, #00ffff66 25%, #ff00ff66 50%, #00ffff66 90%);
+    background: linear-gradient(45deg, #018f8fcc, #018f8fcc 35%, #00ffffcc 55%, #018f8fcc 75%);
     background-size: 200% 100%; /* Tamaño del fondo */
     animation: slideBackground 3s linear infinite; /* Animación de diagonales */
     overflow: hidden;
@@ -222,22 +202,22 @@ onBeforeUnmount(() => {
     }
 }
 
-.play-button-container {
-    text-align: center; /* Centra el botón horizontalmente */
-    margin-top: 20px; /* Espacio entre la barra de progreso y el botón */
+.range {
+    position: absolute;
+    top: 100%;
+    transform: translateY(-50%) rotate(-90deg);
+    color: #00ffff;
+    width: 0px;
+    height: 0px;
+    display: block;
+    text-shadow: none;
 }
-
-.play-button {
-    background-color: #ff00ff; /* Rosa neón para el botón */
-    color: #ffffff; /* Texto blanco */
-    font-weight: bold;
-    border-radius: 10px;
-    box-shadow: 0px 0px 10px #ff00ffcc, 0px 0px 10px #00ffffcc; /* Efecto neón en el botón */
-    padding: 10px 20px;
-    transition: transform 0.2s ease;
+.range_from {
+    left: 0;
+    margin-left: -25px;
 }
-
-.play-button:hover {
-    transform: scale(1.1); /* Aumenta ligeramente el tamaño del botón al hacer hover */
+.range_to {
+    right: 0;
+    margin-right: -3px;
 }
 </style>
