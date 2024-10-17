@@ -35,13 +35,14 @@ interface Segment {
 const currentProgress = ref<number>(0);
 let intervalId: number | null = null;
 
-// const segments = ref<Segment[]>([{ title: "Work", startTime: "01:00", endTime: "08:00" }]);
+// const segments = ref<Segment[]>([{ title: "Work", startTime: "20:00", endTime: "21:00" }]);
 const segments = ref<Segment[]>([
     { title: "Work", startTime: "06:00", endTime: "08:00" },
     { title: "Daily", startTime: "08:00", endTime: "08:15" },
     { title: "Work", startTime: "08:15", endTime: "12:00" },
     { title: "Launch", startTime: "12:00", endTime: "12:45" },
-    { title: "Work", startTime: "12:45", endTime: "19:30" },
+    { title: "Nap", startTime: "12:45", endTime: "13:00" },
+    { title: "Work", startTime: "13:00", endTime: "14:30" },
     // { title: "Nap", startTime: "14:00", endTime: "14:15" },
     // { title: "Work", startTime: "14:15", endTime: "16:00" },
     // { title: "Random time", startTime: "16:00", endTime: "20:00" },
@@ -81,7 +82,9 @@ const isCurrentSegment = (segment: Segment): boolean => {
 
     const isCurrent = currentTime >= segmentStart && currentTime <= segmentEnd;
 
-    return isCurrent;
+    if (isCurrent) return true;
+
+    return false;
 };
 
 const currentSegmentProgress = (segment: Segment): number => {
@@ -164,8 +167,8 @@ onBeforeUnmount(() => {
     }
 }
 .completed-segment {
-    color: #000000cc; /* Texto blanco para buen contraste */
-    text-shadow: 0px 0px 5px #ff00ffcc, 0px 0px 5px #ff00ffcc;
+    color: #ff00ffcc; /* Texto blanco para buen contraste */
+    text-shadow: 0px 0px 10px #000000, 0px 0px 10px #000000;
     // background: linear-gradient(45deg, #00ffff50, #00ffff20, #00ffff50, #00ffff20);
     background: linear-gradient(45deg, #4b114bcc, #4b114bcc 25%, #4b114bcc 50%, #4b114bcc 90%);
     background-size: 200% 100%; /* Tamaño del fondo */
