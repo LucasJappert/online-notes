@@ -151,7 +151,7 @@ onBeforeUnmount(() => {
     border-radius: 10px; /* Bordes redondeados */
     /* border: 2px solid #00ffffcc; */
     margin: auto 15px;
-    box-shadow: 0px 0px 10px #ff00ffcc; /* Efecto de resplandor en los segmentos */
+    box-shadow: 0px 0px 10px #00ffffcc;
     min-width: 50px;
     width: 100%;
     text-shadow: 0px 0px 10px #ff00ffcc; /* Efecto de sombra neón */
