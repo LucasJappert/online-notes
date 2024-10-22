@@ -14,7 +14,12 @@ const routes: Array<any> = [
         name: "ProgressWork",
         path: "/progress-work",
         component: () => import("../views/ProgressWork.vue"),
-    }
+    },
+    {
+        name: "NeonBorder",
+        path: "/neon-border",
+        component: () => import("../views/NeonBorder.vue"),
+    },
 ];
 
 const BASE_URL = import.meta.env.BASE_URL;
