@@ -43,9 +43,11 @@ const segments = ref<Segment[]>([
     { title: "Launch", startTime: "12:00", endTime: "12:45" },
     { title: "Nap", startTime: "12:45", endTime: "13:00" },
     { title: "Work", startTime: "13:00", endTime: "14:30" },
+
     // { title: "Nap", startTime: "14:00", endTime: "14:15" },
     // { title: "Work", startTime: "14:15", endTime: "16:00" },
-    // { title: "Random time", startTime: "16:00", endTime: "20:00" },
+    // { title: "Random time", startTime: "16:00", endTime: "23:00" },
+    // { title: "Random time", startTime: "23:00", endTime: "24:00" },
 ]);
 
 const startTime = ref<string>("14:00");
@@ -130,31 +132,39 @@ onBeforeUnmount(() => {
 });
 </script>
 
+<style lang="scss">
+body,
+.dark-theme,
+html {
+    background-color: transparent !important;
+    background: transparent !important;
+}
+</style>
+
 <style scoped lang="scss">
 .timeline-bar {
     display: flex;
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    background-color: #121212; /* Fondo oscuro */
+    background-color: transparent; /* Fondo oscuro */
     padding: 10px;
     border-radius: 10px; /* Bordes redondeados */
 }
 
 .segment {
-    background-color: #000000;
+    background-color: #00000050;
     font-weight: bold;
     position: relative;
     height: 40px;
     display: inline-block;
-    background-color: #1c1c1c; /* Fondo aún más oscuro para los segmentos */
-    border-radius: 10px; /* Bordes redondeados */
-    /* border: 2px solid #00ffffcc; */
+    // background-color: #1c1c1c;
+    border-radius: 10px;
     margin: auto 15px;
-    box-shadow: 0px 0px 10px #00ffffcc;
     min-width: 50px;
     width: 100%;
-    text-shadow: 0px 0px 10px #ff00ffcc; /* Efecto de sombra neón */
+    text-shadow: 0px 0px 10px #ae01f8;
+    box-shadow: 2px 2px 2px 0px #ae01f8, -2px -2px 2px 0px #00c8ff;
 
     .segment-title {
         position: absolute;
@@ -167,30 +177,30 @@ onBeforeUnmount(() => {
     }
 }
 .completed-segment {
-    color: #ff00ffcc; /* Texto blanco para buen contraste */
+    color: #00c8ff;
     text-shadow: 0px 0px 10px #000000, 0px 0px 10px #000000;
-    // background: linear-gradient(45deg, #00ffff50, #00ffff20, #00ffff50, #00ffff20);
-    background: linear-gradient(45deg, #4b114bcc, #4b114bcc 25%, #4b114bcc 50%, #4b114bcc 90%);
-    background-size: 200% 100%; /* Tamaño del fondo */
+    background: #006480;
+    background-size: 200% 100%;
     border-radius: 10px;
 }
 .current-segment {
-    box-shadow: 0px 0px 10px #00ffffcc;
-    color: #00ffffcc;
-    text-shadow: 0px 0px 15px #000, 0px 0px 15px #000, 0px 0px 15px #000, 0px 0px 15px #000;
+    color: #00c8ff;
+    text-shadow: 0px 0px 5px #000, 0px 0px 5px #000, 0px 0px 5px #000, 0px 0px 5px #000;
+    box-shadow: 3px 3px 5px 0px #ae01f8, -3px -3px 5px 0px #00c8ff, 3px 3px 5px 0px #ae01f8, -3px -3px 5px 0px #00c8ff;
 }
 
 .progress {
     height: 100%;
     position: absolute;
     transition: width 1s ease;
-    background: linear-gradient(45deg, #018f8fcc, #018f8fcc 35%, #00ffffcc 55%, #018f8fcc 75%);
-    background-size: 200% 100%; /* Tamaño del fondo */
-    animation: slideBackground 3s linear infinite; /* Animación de diagonales */
+    // background: linear-gradient(45deg, #aa00ffcc, #018f8fcc 35%, #00ffffcc 55%, #aa00ffcc 75%);
+    background: linear-gradient(45deg, #006480, #006480 35%, #00afe0 45%, #006480 75%);
+    background-size: 200% 100%;
+    animation: slideBackground 3s linear infinite;
     overflow: hidden;
     z-index: 0;
     border-radius: 10px;
-    box-shadow: 0px 0px 15px #00ffff80; /* Efecto de resplandor alrededor del progreso completado */
+    box-shadow: 2px 0px 2px #00c8ff;
 }
 
 @keyframes slideBackground {
@@ -211,6 +221,7 @@ onBeforeUnmount(() => {
     height: 0px;
     display: block;
     text-shadow: none;
+    text-shadow: 0px 0px 10px #000, 0px 0px 10px #000, 0px 0px 10px #000, 0px 0px 10px #000;
 }
 .range_from {
     left: 0;
