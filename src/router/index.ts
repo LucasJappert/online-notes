@@ -20,6 +20,11 @@ const routes: Array<any> = [
         path: "/neon-border",
         component: () => import("../views/NeonBorder.vue"),
     },
+    {
+        name: "BeRightBackText",
+        path: "/brb-text",
+        component: () => import("../views/twitch/BeRightBackText.vue"),
+    },
 ];
 
 const BASE_URL = import.meta.env.BASE_URL;
