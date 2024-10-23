@@ -39,16 +39,15 @@ html {
     height: 100vh;
     width: 100vw;
     background-color: transparent;
-    padding: 20px;
+    padding: 80px;
 }
 .neon-border {
     position: relative;
     padding: 10px;
     border-radius: 10px;
-    box-shadow: 0 0 20px #00c8ff, 0 0 20px #df01f8;
+    box-shadow: 0 0 40px #00c8ff, 0 0 40px #df01f8;
     border: 5px solid transparent;
-    background: #000;
-    background-clip: padding-box;
+    background: transparent;
     box-sizing: border-box;
     animation: rotate-shadow 10s infinite linear;
     height: 100%;
@@ -57,28 +56,28 @@ html {
 
 @keyframes neon-glow {
     0% {
-        box-shadow: 0 0 10px #00c8ff88, 0 0 10px #df01f888;
+        box-shadow: 0 0 10px #00c8ff20, 0 0 10px #df01f820;
     }
     100% {
-        box-shadow: 0 0 20px #df01f8, 0 0 20px #00c8ffff;
+        box-shadow: 0 0 40px #df01f8, 0 0 40px #00c8ffff;
     }
 }
 
 @keyframes rotate-shadow {
     0% {
-        box-shadow: 0 0 20px #00c8ff, 0 0 20px #df01f8, -10px -10px 30px #00c8ff, 10px 10px 30px #df01f8;
+        box-shadow: 0 0 40px #00c8ff, 0 0 40px #df01f8, -10px -10px 40px #00c8ff, 10px 10px 40px #df01f8;
     }
     25% {
-        box-shadow: -10px 10px 30px #00c8ff, 10px -10px 30px #df01f8;
+        box-shadow: -10px 10px 40px #00c8ff, 10px -10px 40px #df01f8;
     }
     50% {
-        box-shadow: 10px 10px 30px #df01f8, -10px -10px 30px #00c8ff;
+        box-shadow: 10px 10px 40px #df01f8, -10px -10px 40px #00c8ff;
     }
     75% {
-        box-shadow: 10px -10px 30px #df01f8, -10px 10px 30px #00c8ff;
+        box-shadow: 10px -10px 40px #df01f8, -10px 10px 40px #00c8ff;
     }
     100% {
-        box-shadow: 0 0 20px #00c8ff, 0 0 20px #df01f8, -10px -10px 30px #00c8ff, 10px 10px 30px #df01f8;
+        box-shadow: 0 0 40px #00c8ff, 0 0 40px #df01f8, -10px -10px 40px #00c8ff, 10px 10px 40px #df01f8;
     }
 }
 </style>
