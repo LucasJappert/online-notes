@@ -14,7 +14,7 @@ export default {
     props: {
         text: {
             type: String,
-            default: "BE RIGHT BACK",
+            default: "BE  RIGHT  BACK",
         },
     },
     data() {
@@ -86,13 +86,14 @@ export default {
 }
 
 .letter {
-    font-family: "Arial", sans-serif;
+    font-family: "Tahoma", sans-serif;
     font-size: 5rem;
     position: relative;
     opacity: 0;
     color: #fff;
     text-shadow: 0 0 10px #00ffff, 0 0 20px #ff00ff, 0 0 30px #00ffff;
     animation: moveToCenter 1.5s ease-in-out forwards;
+    font-weight: bold;
 }
 
 @keyframes moveToCenter {
