@@ -25,6 +25,11 @@ const routes: Array<any> = [
         path: "/brb-text",
         component: () => import("../views/twitch/BeRightBackText.vue"),
     },
+    {
+        name: "MyStreamInfo",
+        path: "/my-stream-info",
+        component: () => import("../views/twitch/MyStreamInfo.vue"),
+    },
 ];
 
 const BASE_URL = import.meta.env.BASE_URL;

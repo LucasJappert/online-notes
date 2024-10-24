@@ -132,14 +132,7 @@ onBeforeUnmount(() => {
 });
 </script>
 
-<style lang="scss">
-body,
-.dark-theme,
-html {
-    background-color: transparent !important;
-    background: transparent !important;
-}
-</style>
+<style lang="scss"></style>
 
 <style scoped lang="scss">
 .timeline-bar {

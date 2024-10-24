@@ -12,3 +12,7 @@ export default {
 </template>
 
 <style scoped></style>
+
+<style lang="scss">
+@import "@/views/styles/my-styles.scss";
+</style>
