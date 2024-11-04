@@ -15,8 +15,8 @@
             </v-col>
 
             <v-col cols="12" class="justify-space-between d-flex mt-2">
-                <v-btn @click="exportNotes" outlined color="secondary" class="my-2 export-button">📤 Export Notes</v-btn>
                 <v-text-field class="search-box" v-model="searchQuery" placeholder="🔍 Search notes..." />
+                <v-btn @click="exportNotes" outlined color="secondary" class="my-2 export-button">📤 Export Notes</v-btn>
             </v-col>
 
             <v-col cols="12" class="">
@@ -104,7 +104,7 @@ export default {
             const downloadAnchorNode = document.createElement("a");
             downloadAnchorNode.setAttribute("href", dataStr);
             const stringDate = new Date().toISOString().slice(0, 10);
-            downloadAnchorNode.setAttribute("download", `notas-${stringDate}.json`);
+            downloadAnchorNode.setAttribute("download", `my-speedy-notes-${stringDate}.json`);
             document.body.appendChild(downloadAnchorNode); // required for firefox
             downloadAnchorNode.click();
             downloadAnchorNode.remove();
@@ -256,7 +256,7 @@ export default {
 
 .save-button {
     position: absolute;
-    right: 30px;
-    bottom: 30px;
+    right: 20px;
+    bottom: 10px;
 }
 </style>

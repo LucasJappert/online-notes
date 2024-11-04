@@ -11,16 +11,6 @@ const routes: Array<any> = [
         component: () => import("../views/MyNotepad.vue"),
     },
     {
-        name: "ProgressWork",
-        path: "/progress-work",
-        component: () => import("../views/ProgressWork.vue"),
-    },
-    {
-        name: "NeonBorder",
-        path: "/neon-border",
-        component: () => import("../views/NeonBorder.vue"),
-    },
-    {
         name: "BeRightBackText",
         path: "/brb-text",
         component: () => import("../views/twitch/BeRightBackText.vue"),
