@@ -4,7 +4,7 @@ Welcome to **Notely**, a modern and minimalist platform for creating, organizing
 
 Currently hosted at: [https://speedy-notes.netlify.app/](https://speedy-notes.netlify.app/)
 
-![image](https://github.com/user-attachments/assets/5a5b9e96-d894-4cc5-8489-7ebd178a88ff)
+![screenshot](public/screenshot.png)
 
 ## 🌟 Features
 
