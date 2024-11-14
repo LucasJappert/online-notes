@@ -17,9 +17,10 @@
             <v-col cols="12" class="justify-space-between d-flex mt-2">
                 <v-text-field class="search-box" v-model="searchQuery" placeholder="🔍 Search notes..." />
                 <div>
-                    <!-- Creamos un boton para importar -->
                     <v-btn @click="importNotes" outlined color="secondary" class="my-2 import-button"> <v-icon>mdi-download</v-icon>Import </v-btn>
-                    <v-btn @click="exportNotes" outlined color="secondary" class="my-2 export-button ml-2"><v-icon>mdi-upload</v-icon> Export</v-btn>
+                    <v-btn @click="exportNotes" outlined color="secondary" class="my-2 export-button ml-2" :class="getSpecialClasses"
+                        ><v-icon>mdi-upload</v-icon> Export</v-btn
+                    >
                 </div>
             </v-col>
 
@@ -71,6 +72,7 @@
 </template>
 
 <script>
+const LAST_EXPORTED_DATE_KEY = "lastExportedDate";
 export default {
     data() {
         return {
@@ -81,6 +83,7 @@ export default {
             noteToDelete: null,
             editingNote: null,
             searchQuery: "",
+            lastExportedDate: new Date().toISOString(),
         };
     },
     computed: {
@@ -97,10 +100,20 @@ export default {
             const noteToUpdate = this.savedNotes.find((note) => note.id === this.editingNote.id);
             return this.editingNote.content == noteToUpdate.content;
         },
+        getSpecialClasses() {
+            const lastExportedDate = new Date(this.lastExportedDate);
+            const timeDiff = new Date() - lastExportedDate;
+            const oneDay = 24 * 60 * 60 * 1000;
+            if (timeDiff > oneDay) {
+                return ["bg-pulse"];
+            }
+            return [];
+        },
     },
     mounted() {
         this.loadNotes();
         this.loadCurrentNote();
+        this.CheckLastExportedNotes();
     },
     methods: {
         exportNotes() {
@@ -112,6 +125,10 @@ export default {
             document.body.appendChild(downloadAnchorNode); // required for firefox
             downloadAnchorNode.click();
             downloadAnchorNode.remove();
+
+            const now = new Date().toISOString();
+            this.lastExportedDate = now;
+            localStorage.setItem(LAST_EXPORTED_DATE_KEY, now);
         },
         importNotes() {
             const input = document.createElement("input");
@@ -220,6 +237,17 @@ export default {
         },
         formatDate(dateString) {
             return dateString;
+        },
+        CheckLastExportedNotes() {
+            const lastExportedNotes = localStorage.getItem(LAST_EXPORTED_DATE_KEY);
+            if (lastExportedNotes) {
+                this.lastExportedDate = lastExportedNotes;
+                return;
+            }
+
+            const now = new Date().toISOString();
+            localStorage.setItem(LAST_EXPORTED_DATE_KEY, now);
+            this.lastExportedDate = now;
         },
     },
 };

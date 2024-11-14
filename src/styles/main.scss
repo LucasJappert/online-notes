@@ -70,3 +70,22 @@ textarea {
         min-height: 100vh !important;
     }
 }
+
+.bg-pulse {
+    animation: bg-pulse 2s infinite;
+}
+
+@keyframes bg-pulse {
+    0% {
+        box-shadow: 0 0 10px #f80000, 0 0 10px #f80000, 0 0 10px #f80000;
+    }
+
+    100% {
+        box-shadow: 0 0 10px #f8000000, 0 0 10px #f8000000, 0 0 10px #f8000000;
+    }
+
+    // 100% {
+    //     background-color: #00baf8 !important;
+    //     box-shadow: 0 0 10px #00baf8;
+    // }
+}
