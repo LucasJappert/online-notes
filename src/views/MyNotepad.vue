@@ -16,7 +16,11 @@
 
             <v-col cols="12" class="justify-space-between d-flex mt-2">
                 <v-text-field class="search-box" v-model="searchQuery" placeholder="🔍 Search notes..." />
-                <v-btn @click="exportNotes" outlined color="secondary" class="my-2 export-button">📤 Export Notes</v-btn>
+                <div>
+                    <!-- Creamos un boton para importar -->
+                    <v-btn @click="importNotes" outlined color="secondary" class="my-2 import-button"> <v-icon>mdi-download</v-icon>Import </v-btn>
+                    <v-btn @click="exportNotes" outlined color="secondary" class="my-2 export-button ml-2"><v-icon>mdi-upload</v-icon> Export</v-btn>
+                </div>
             </v-col>
 
             <v-col cols="12" class="">
@@ -108,6 +112,39 @@ export default {
             document.body.appendChild(downloadAnchorNode); // required for firefox
             downloadAnchorNode.click();
             downloadAnchorNode.remove();
+        },
+        importNotes() {
+            const input = document.createElement("input");
+            input.type = "file";
+            input.accept = ".json";
+            input.onchange = (event) => {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = () => {
+                        const data = JSON.parse(reader.result);
+                        let importedNotes = 0;
+                        for (const note of data) {
+                            //Verificamos si la nota ya existe, comparando el contenido
+                            const existingNote = this.savedNotes.find((n) => n.content === note.content);
+                            if (existingNote) continue;
+
+                            const maxNoteId = Math.max(...this.savedNotes.map((n) => n.id));
+                            note.id = maxNoteId + 1;
+                            note.title = `Nota ${note.id}`;
+                            this.savedNotes.push(note);
+                            importedNotes++;
+                        }
+                        this.savedNotes.sort((a, b) => b.date.localeCompare(a.date));
+                        // Hacemos un alert con la cantidad de notas importadas usando algun emoticon
+                        if (importedNotes > 0) alert(`🎉 ${importedNotes} notes imported!`);
+                        else alert("⚠️ All notes already exist in your notepad.");
+                        this.saveToLocalStorage();
+                    };
+                    reader.readAsText(file);
+                }
+            };
+            input.click();
         },
         saveNote() {
             if (this.currentNote) {

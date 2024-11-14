@@ -16,6 +16,7 @@
         "vuetify": "^3.7.0"
     },
     "devDependencies": {
+        "@mdi/font": "^7.4.47",
         "@types/canvas-confetti": "^1.6.4",
         "@types/node": "^22.3.0",
         "@types/vue-router": "^2.0.0",
