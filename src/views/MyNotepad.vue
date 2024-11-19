@@ -73,6 +73,8 @@
 
 <script>
 const LAST_EXPORTED_DATE_KEY = "lastExportedDate";
+const LAST_EXPORTED_DATA_KEY = "lastExportedData";
+import { WarmConfirmAsync } from "../plugins/sweet-alerts";
 export default {
     data() {
         return {
@@ -84,6 +86,7 @@ export default {
             editingNote: null,
             searchQuery: "",
             lastExportedDate: new Date().toISOString(),
+            lastExportedData: null,
         };
     },
     computed: {
@@ -101,27 +104,36 @@ export default {
             return this.editingNote.content == noteToUpdate.content;
         },
         getSpecialClasses() {
-            const lastExportedDate = new Date(this.lastExportedDate);
-            const timeDiff = new Date() - lastExportedDate;
-            const oneDay = 24 * 60 * 60 * 1000;
-            if (timeDiff > oneDay) {
-                return ["bg-pulse"];
-            }
-            return [];
+            const lastExportedData = this.lastExportedData;
+            if (!lastExportedData) return ["bg-pulse"];
+
+            // Verify if current notes and saved notes are the same as the last exported data
+            const lastExportedNotes = JSON.parse(lastExportedData);
+            const sameCurrentNotes = JSON.stringify(this.currentNote) === JSON.stringify(lastExportedNotes.currentNote);
+            const sameSavedNotes = JSON.stringify(this.savedNotes) === JSON.stringify(lastExportedNotes.savedNotes);
+
+            if (sameCurrentNotes && sameSavedNotes) return [];
+
+            return ["bg-pulse"];
         },
     },
     mounted() {
+        this.lastExportedData = localStorage.getItem(LAST_EXPORTED_DATA_KEY);
         this.loadNotes();
         this.loadCurrentNote();
         this.CheckLastExportedNotes();
     },
     methods: {
         exportNotes() {
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(this.savedNotes));
+            const { savedNotes, currentNote } = this;
+            const dataToSave = { savedNotes, currentNote };
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(dataToSave));
             const downloadAnchorNode = document.createElement("a");
             downloadAnchorNode.setAttribute("href", dataStr);
             const stringDate = new Date().toISOString().slice(0, 10);
-            downloadAnchorNode.setAttribute("download", `my-speedy-notes-${stringDate}.json`);
+            console.log(import.meta.env.DEV);
+            const fileName = `${import.meta.env.DEV ? "dev-" : ""}my-speedy-notes-${stringDate}.json`;
+            downloadAnchorNode.setAttribute("download", fileName);
             document.body.appendChild(downloadAnchorNode); // required for firefox
             downloadAnchorNode.click();
             downloadAnchorNode.remove();
@@ -129,8 +141,30 @@ export default {
             const now = new Date().toISOString();
             this.lastExportedDate = now;
             localStorage.setItem(LAST_EXPORTED_DATE_KEY, now);
+            localStorage.setItem(LAST_EXPORTED_DATA_KEY, JSON.stringify(dataToSave));
+            this.lastExportedData = JSON.stringify(dataToSave);
         },
-        importNotes() {
+        verifyImportedData(data) {
+            if (!data) return false;
+            if (!data.savedNotes || !data.currentNote) return false;
+            if (!Array.isArray(data.savedNotes)) return false;
+            if (typeof data.currentNote !== "string") return false;
+            return true;
+        },
+        tryGetJsonFromData(data) {
+            try {
+                return JSON.parse(data);
+            } catch (error) {
+                return null;
+            }
+        },
+        async importNotes() {
+            const confirmResult = await WarmConfirmAsync(
+                "Are you sure you want to continue?",
+                "This process will add notes that doesn't exist in your current list, and will overwrite your not saved current note",
+            );
+            if (!confirmResult) return;
+
             const input = document.createElement("input");
             input.type = "file";
             input.accept = ".json";
@@ -139,10 +173,12 @@ export default {
                 if (file) {
                     const reader = new FileReader();
                     reader.onload = () => {
-                        const data = JSON.parse(reader.result);
+                        console.log(typeof reader.result);
+                        const data = this.tryGetJsonFromData(reader.result);
+                        if (!this.verifyImportedData(data)) return alert("Invalid file format");
+
                         let importedNotes = 0;
-                        for (const note of data) {
-                            //Verificamos si la nota ya existe, comparando el contenido
+                        for (const note of data.savedNotes) {
                             const existingNote = this.savedNotes.find((n) => n.content === note.content);
                             if (existingNote) continue;
 
@@ -153,9 +189,11 @@ export default {
                             importedNotes++;
                         }
                         this.savedNotes.sort((a, b) => b.date.localeCompare(a.date));
-                        // Hacemos un alert con la cantidad de notas importadas usando algun emoticon
                         if (importedNotes > 0) alert(`🎉 ${importedNotes} notes imported!`);
-                        else alert("⚠️ All notes already exist in your notepad.");
+                        else alert("⚠️ All notes already exist in your notes.");
+
+                        this.currentNote = data.currentNote;
+
                         this.saveToLocalStorage();
                     };
                     reader.readAsText(file);

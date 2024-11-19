@@ -1,8 +1,9 @@
-// src/plugins/vuetify.ts
 import { createVuetify } from 'vuetify';
 import * as directives from 'vuetify/directives';
 import * as components from 'vuetify/components';
 import '@mdi/font/css/materialdesignicons.css'; // Importa las fuentes de MDI
+import 'vuetify/styles';
+
 
 const theme = {
     themes: {
@@ -35,10 +36,10 @@ export default createVuetify({
     components,
     directives,
     theme: {
-        defaultTheme: 'dark', // Establecer el tema predeterminado
+        defaultTheme: 'dark',
         themes: theme.themes,
     },
     icons: {
-        defaultSet: 'mdi', // Asegúrate de que "mdi" esté configurado como el set predeterminado
+        defaultSet: 'mdi',
     },
 });

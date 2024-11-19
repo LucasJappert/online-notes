@@ -12,5 +12,10 @@
         "node_modules",
         "dist",
         ".git"
-    ]
+    ],
+    "compilerOptions": {
+        "types": [
+            "vue-sweetalert2"
+        ],
+    }
 }
