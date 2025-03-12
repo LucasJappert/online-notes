@@ -251,8 +251,6 @@ export default {
             const noteToUpdate = this.savedNotes.find((note) => note.id === this.editingNote.id);
             noteToUpdate.content = this.editingNote.content;
             this.saveToLocalStorage();
-            this.isNoteModalOpen = false;
-            this.editingNote = null;
         },
         confirmDelete(note) {
             this.noteToDelete = note;
