@@ -11,7 +11,7 @@
                     @input="autoSaveCurrentNote"
                     ref="currentTextarea"
                 ></v-textarea>
-                <v-btn :disabled="currentNote == ''" @click="saveNote" color="primary" class="my-2 save-button">💾 SAVE NOTE</v-btn>
+                <v-btn :disabled="currentNote == ''" @click="SaveDraftButton" color="primary" class="my-2 save-button">💾 SAVE NOTE</v-btn>
             </v-col>
 
             <v-col cols="12" class="justify-space-between d-flex mt-2">
@@ -49,7 +49,7 @@
                     </v-card-text>
                     <v-card-actions class="justify-space-between">
                         <v-btn color="grey" @click="isNoteModalOpen = false">Cancel</v-btn>
-                        <v-btn :disabled="updateButtonDisabled" color="success" @click="updateNote">💾 Save changes</v-btn>
+                        <v-btn :disabled="updateButtonDisabled" color="success" @click="UpdateNoteButton">💾 Save changes</v-btn>
                     </v-card-actions>
                 </v-card>
             </v-dialog>
@@ -122,8 +122,19 @@ export default {
         this.loadNotes();
         this.loadCurrentNote();
         this.CheckLastExportedNotes();
+        window.addEventListener("keydown", this.HandleKeyDown);
+    },
+    beforeDestroy() {
+        window.removeEventListener("keydown", this.HandleKeyDown);
     },
     methods: {
+        HandleKeyDown(event) {
+            if (event.ctrlKey && event.key === "s") {
+                if (this.editingNote) this.UpdateNoteButton();
+                else this.SaveDraftButton();
+                event.preventDefault();
+            }
+        },
         exportNotes() {
             const { savedNotes, currentNote } = this;
             const dataToSave = { savedNotes, currentNote };
@@ -201,7 +212,7 @@ export default {
             };
             input.click();
         },
-        saveNote() {
+        SaveDraftButton() {
             if (this.currentNote) {
                 const currentDate = this.getCurrentDate();
 
@@ -247,7 +258,7 @@ export default {
             this.editingNote = JSON.parse(JSON.stringify(note));
             this.isNoteModalOpen = true;
         },
-        updateNote() {
+        UpdateNoteButton() {
             const noteToUpdate = this.savedNotes.find((note) => note.id === this.editingNote.id);
             noteToUpdate.content = this.editingNote.content;
             this.saveToLocalStorage();
